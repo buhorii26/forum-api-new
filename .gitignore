@@ -1,0 +1,9 @@
+node_modules
+package-lock.json
+config/database/test.json
+coverage
+config
+.env
+key_pair
+access_key_aws
+.test.env
