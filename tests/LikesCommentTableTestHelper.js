@@ -2,7 +2,7 @@ const pool = require('../src/Infrastructures/database/postgres/pool');
 
 const LikesCommentTableTestHelper = {
   async addLikes({
-    id = 'like-123',
+    id = 'likes-123',
     userId = 'user-123',
     threadId = 'thread-123',
     commentId = 'comment-123',

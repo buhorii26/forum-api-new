@@ -11,13 +11,27 @@ class DetailComment {
     this.date = date;
     this.content = content;
     this.replies = replies;
-    this.likeCount = likeCount; // Tambahkan properti likeCount
+    this.likeCount = likeCount;
   }
 
   _verifyPayload({
-    id, username, date, content, replies = [], likeCount,
+    id,
+    username,
+    date,
+    content,
+    replies = [],
+    likeCount,
+    isDelete,
   }) {
-    if (!id || !username || !date || !content || !replies || likeCount === undefined) {
+    if (
+      !id
+      || !username
+      || !date
+      || !content
+      || !replies
+      || likeCount === undefined
+      || isDelete === undefined
+    ) {
       throw new Error('DETAIL_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
@@ -26,7 +40,8 @@ class DetailComment {
       || typeof username !== 'string'
       || typeof date !== 'string'
       || typeof content !== 'string'
-      || typeof likeCount !== 'number' // Validasi tipe likeCount
+      || typeof likeCount !== 'number'
+      || typeof isDelete !== 'boolean'
       || !Array.isArray(replies)
     ) {
       throw new Error('DETAIL_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
@@ -34,7 +49,13 @@ class DetailComment {
   }
 
   _remapPayload({
-    id, username, date, content, replies = [], isDelete, likeCount,
+    id,
+    username,
+    date,
+    content,
+    replies = [],
+    isDelete,
+    likeCount,
   }) {
     return {
       id,
@@ -42,7 +63,7 @@ class DetailComment {
       date,
       content: isDelete ? '**komentar telah dihapus**' : content,
       replies,
-      likeCount, // Sertakan likeCount dalam payload
+      likeCount,
     };
   }
 }

@@ -7,6 +7,8 @@ describe('DetailComment entities', () => {
       date: '2022-09-09T09:15:30.338Z',
       content: 'Nice article!',
       replies: [],
+      likeCount: 0,
+      isDelete: 0,
     };
 
     expect(() => new DetailComment(payload)).toThrowError(
@@ -21,6 +23,8 @@ describe('DetailComment entities', () => {
       date: '2022-09-09T09:15:30.338Z',
       content: 123,
       replies: [],
+      likeCount: 'invalid',
+      isDelete: 'not boolean',
     };
 
     expect(() => new DetailComment(payload)).toThrowError(
@@ -35,11 +39,12 @@ describe('DetailComment entities', () => {
       date: '2022-09-09T09:15:30.338Z',
       content: 'Nice article!',
       replies: [],
+      likeCount: 5,
       isDelete: false,
     };
 
     const {
-      id, username, date, content, replies,
+      id, username, date, content, replies, likeCount,
     } = new DetailComment(payload);
 
     expect(id).toEqual(payload.id);
@@ -47,6 +52,7 @@ describe('DetailComment entities', () => {
     expect(date).toEqual(payload.date);
     expect(content).toEqual(payload.content);
     expect(replies).toEqual(payload.replies);
+    expect(likeCount).toEqual(payload.likeCount);
   });
 
   it('should create CommentDetail object correctly when isDeleted is true', () => {
@@ -56,11 +62,12 @@ describe('DetailComment entities', () => {
       date: '2022-09-09T09:15:30.338Z',
       content: 'Nice article!',
       replies: [],
+      likeCount: 5,
       isDelete: true,
     };
 
     const {
-      id, username, date, content, replies,
+      id, username, date, content, replies, likeCount,
     } = new DetailComment(payload);
 
     expect(id).toEqual(payload.id);
@@ -68,6 +75,7 @@ describe('DetailComment entities', () => {
     expect(date).toEqual(payload.date);
     expect(content).toEqual('**komentar telah dihapus**');
     expect(replies).toEqual(payload.replies);
+    expect(likeCount).toEqual(payload.likeCount);
   });
 
   // Pengujian untuk metode _verifyPayload
@@ -77,6 +85,8 @@ describe('DetailComment entities', () => {
       username: 'user-456',
       date: '2022-09-09T09:15:30.338Z',
       content: 'comment yang bagus!',
+      likeCount: 0,
+      isDelete: false,
     };
 
     const { replies } = new DetailComment(payload);
@@ -92,6 +102,7 @@ describe('DetailComment entities', () => {
       date: '2022-09-09T09:15:30.338Z',
       content: 'Komen ini telah dihapus',
       replies: [],
+      likeCount: 0,
       isDelete: true,
     };
 
@@ -101,6 +112,7 @@ describe('DetailComment entities', () => {
       date: '2022-09-09T09:15:30.338Z',
       content: 'komen ini tersembunyi',
       replies: [],
+      likeCount: 0,
       isDelete: false,
     };
 

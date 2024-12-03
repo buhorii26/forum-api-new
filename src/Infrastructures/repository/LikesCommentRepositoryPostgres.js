@@ -7,15 +7,16 @@ class LikesCommentRepositoryPostgres extends LikesCommentRepository {
     this._idGenerator = idGenerator;
   }
 
-  async addLikes(ownerId, threadId, commentId) {
+  async addLikes(userId, threadId, commentId) {
     const id = `likes-${this._idGenerator()}`;
 
     const query = {
       text: 'INSERT INTO likes_comment VALUES ($1, $2, $3, $4)',
-      values: [id, ownerId, threadId, commentId],
+      values: [id, userId, threadId, commentId],
     };
 
     await this._pool.query(query);
+    return id;
   }
 
   async deleteLikesById(id) {

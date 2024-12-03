@@ -5,12 +5,12 @@ class LikesCommentUseCase {
     this._commentRepository = commentRepository;
   }
 
-  async execute(ownerId, threadId, commentId) {
+  async execute(userId, threadId, commentId) {
     await this._threadRepository.checkAvailableThread(threadId);
     await this._commentRepository.checkAvailableComment(commentId);
 
     const hasLiked = await this._likesCommentRepository.getHasLiked(
-      ownerId,
+      userId,
       threadId,
       commentId,
     );
@@ -19,7 +19,7 @@ class LikesCommentUseCase {
       return this._likesCommentRepository.deleteLikesById(hasLiked[0].id);
     }
 
-    return this._likesCommentRepository.addLikes(ownerId, threadId, commentId);
+    return this._likesCommentRepository.addLikes(userId, threadId, commentId);
   }
 }
 

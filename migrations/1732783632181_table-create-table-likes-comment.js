@@ -8,21 +8,36 @@ exports.up = (pgm) => {
     owner: {
       type: 'VARCHAR(50)',
       notNull: true,
-      references: 'users',
     },
     thread_id: {
       type: 'VARCHAR(50)',
       notNull: true,
-      references: 'threads',
     },
     comment_id: {
       type: 'VARCHAR(50)',
       notNull: true,
-      references: 'comments',
     },
   });
+  pgm.addConstraint(
+    'likes_comment',
+    'fk_likes_comment.owner_users.id',
+    'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE',
+  );
+  pgm.addConstraint(
+    'likes_comment',
+    'fk_likes_comment.thread_id_threads.id',
+    'FOREIGN KEY(thread_id) REFERENCES threads(id) ON DELETE CASCADE',
+  );
+  pgm.addConstraint(
+    'likes_comment',
+    'fk_likes_comment.comment_id_comments.id',
+    'FOREIGN KEY(comment_id) REFERENCES comments(id) ON DELETE CASCADE',
+  );
 };
 
 exports.down = (pgm) => {
+  pgm.dropConstraint('likes_comment', 'fk_likes_comment.owner_users.id');
+  pgm.dropConstraint('likes_comment', 'fk_likes_comment.thread_id_threads.id');
+  pgm.dropConstraint('likes_comment', 'fk_likes_comment.comment_id_comments.id');
   pgm.dropTable('likes_comment');
 };

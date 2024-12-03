@@ -35,6 +35,94 @@ describe('/threads/{threadId}/comments/{commentId}/likes endpoint', () => {
       expect(responseJson.message).toEqual('Missing authentication');
     });
 
+    it('should response 404 when thread is not found', async () => {
+      const server = await createServer(container);
+
+      const loginPayload = {
+        username: 'johndoe',
+        password: 'secret',
+      };
+
+      await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: {
+          username: loginPayload.username,
+          password: loginPayload.password,
+          fullname: 'Dicoding Indonesia',
+        },
+      });
+
+      const auth = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: loginPayload,
+      });
+      const authResponse = JSON.parse(auth.payload);
+      const authToken = authResponse.data.accessToken;
+
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/threads/xxx/comments/123/likes',
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('thread not found');
+    });
+
+    it('should response 404 when comment is not found', async () => {
+      const loginPayload = {
+        username: 'johndoe',
+        password: 'secret',
+      };
+      const threadPayload = {
+        title: 'My title',
+        body: 'The body of thread',
+      };
+
+      const server = await createServer(container);
+      await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: {
+          username: loginPayload.username,
+          password: loginPayload.password,
+          fullname: 'Dicoding Indonesia',
+        },
+      });
+
+      const auth = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: loginPayload,
+      });
+      const authResponse = JSON.parse(auth.payload);
+      const authToken = authResponse.data.accessToken;
+
+      const thread = await server.inject({
+        method: 'POST',
+        url: '/threads',
+        payload: threadPayload,
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      const threadResponse = JSON.parse(thread.payload);
+      const threadId = threadResponse.data.addedThread.id;
+
+      const response = await server.inject({
+        method: 'PUT',
+        url: `/threads/${threadId}/comments/xxx/likes`,
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('comment tidak ditemukan');
+    });
+
     it('should reponse 200 and persist like comment', async () => {
       const loginPayload = {
         username: 'johndoe',
