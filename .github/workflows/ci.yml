@@ -1,71 +1,51 @@
 name: Continuous Integration
-
+ 
 on: 
   pull_request:
     branches:
       - main
-
+ 
 jobs:
   test:
     runs-on: ubuntu-latest
-
+ 
     strategy:
       matrix:
         node-version: ['18.x', '20.x']
-
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+   
     services:
       postgres:
-        image: postgres:14
+        image: postgres
         env:
          POSTGRES_USER: postgres
          POSTGRES_PASSWORD: postgres123
          POSTGRES_DB: forumapi_test
+         
         options: >-
-          --health-cmd "pg_isready -h localhost -p 5432 -U postgres"
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5433:5432
-
+          - 5432:5432
+ 
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-
-    - name: Install Dependencies
+    - name: npm install migrate and test
       run: |
-        npm cache clean --force
         npm install
+        npm run migrate up
+        npm run test
       env:
         CI: true
-
-    - name: Wait for Postgres
-      run: |
-        until pg_isready -h localhost -p 5433 -U postgres; do
-          echo "Waiting for postgres..."
-          sleep 1
-        done
-    
-    - name: Cache Node modules
-      uses: actions/cache@v2
-      with: 
-        path: node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node- 
-
-    - name: Run Database Migrations
-      run: npm run migrate up
-
-    - name: Run Tests with Verbose Logging
-      run: npm test -- --verbose
-      env:
-        HOST: forum-api-db-instance.c7y20skm8f1x.ap-southeast-1.rds.amazonaws.com
+        HOST: localhost
         PORT: 5000
-        PGHOST: forum-api-db-instance.c7y20skm8f1x.ap-southeast-1.rds.amazonaws.com
+        PGHOST: localhost
         PGPORT: 5432
         PGUSER: postgres
         PGPASSWORD: postgres123
