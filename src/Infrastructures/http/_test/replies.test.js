@@ -108,7 +108,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
 
     it('should response 400 when request payload has invalid property type', async () => {
       const loginPayload = {
-        username: 'ryananggada',
+        username: 'buhori',
         password: 'password123',
       };
       const threadPayload = {
@@ -176,7 +176,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
 
     it('should response 201 and persisted reply', async () => {
       const loginPayload = {
-        username: 'ryananggada',
+        username: 'buhori',
         password: 'password123',
       };
       const threadPayload = {
