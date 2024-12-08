@@ -40,18 +40,18 @@ jobs:
       run: |
         npm install
         npm run migrate up
-        npm run test 
+        npm run test
       env:
         CI: true
+        HOST: ${{ secrets.HOST }}
+        PORT: 3000
         PGHOST_TEST: ${{ secrets.PGHOST_TEST }}
         PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
         PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
         PGPASSWORD_TEST: ${{ secrets.PGPASSWORD_TEST }}
         PGPORT_TEST: ${{ secrets.PGPORT_TEST }}
-        HOST: ${{ secrets.HOST }}
-        PORT: 3000
         PGHOST: ${{ secrets.PGHOST }}
-        PGPORT: 5432
+        PGPORT: ${{ secrets.PGPORT }}
         PGUSER: ${{ secrets.PGUSER }}
         PGPASSWORD: ${{ secrets.PGPASSWORD }}
         PGDATABASE: ${{ secrets.PGDATABASE }}
