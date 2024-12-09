@@ -40,21 +40,16 @@ jobs:
       run: |
         npm install
         npm run migrate up
-        npm run test:watch
+        npm run test
       env:
         CI: true
-        HOST: ${{ secrets.HOST }}
+        HOST: localhost
         PORT: 5000
-        PGHOST_TEST: ${{ secrets.PGHOST_TEST }}
-        PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
-        PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
-        PGPASSWORD_TEST: ${{ secrets.PGPASSWORD_TEST }}
-        PGPORT_TEST: ${{ secrets.PGPORT_TEST }}
-        PGHOST: ${{ secrets.PGHOST }}
-        PGPORT: ${{ secrets.PGPORT }}
-        PGUSER: ${{ secrets.PGUSER }}
-        PGPASSWORD: ${{ secrets.PGPASSWORD }}
-        PGDATABASE: ${{ secrets.PGDATABASE }}
+        PGHOST: localhost
+        PGPORT: 5432
+        PGUSER: developer
+        PGPASSWORD: developer123
+        PGDATABASE: forumapi_test
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ap-southeast-1
