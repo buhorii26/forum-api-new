@@ -18,9 +18,9 @@ jobs:
       postgres:
         image: postgres
         env:
-         PGUSER: postgres
-         PGPASSWORD: postgres123
-         PGDATABASE_TEST: forumapi_test
+         POSTGRES_USER: postgres
+         POSTGRES_PASSWORD: postgres123
+         POSTGRES_DB: forumapi_test
          
         options: >-
           --health-cmd pg_isready
