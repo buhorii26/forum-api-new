@@ -18,9 +18,9 @@ jobs:
       postgres:
         image: postgres
         env:
-         PGUSER: ${{ secrets.PGUSER }}
-         PGPASSWORD: ${{ secrets.PGPASSWORD }}
-         PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
+         PGUSER: postgres
+         PGPASSWORD: postgres123
+         PGDATABASE_TEST: forumapi_test
          
         options: >-
           --health-cmd pg_isready
