@@ -38,8 +38,9 @@ class GetDetailThreadUseCase {
             id: comment.id,
             username: comment.username,
             date: comment.date,
-            content: comment.content,
+            content: comment.is_delete ? '**komentar telah dihapus**' : comment.content,
             replies: [],
+            likeCount: parseInt(comment.like_count, 10), // Tambahkan properti likeCount
             isDelete: comment.is_delete,
           });
 
@@ -52,7 +53,7 @@ class GetDetailThreadUseCase {
               repliesInComment.map(
                 async (reply) => new DetailReplyComment({
                   id: reply.id,
-                  content: reply.content,
+                  content: reply.is_delete ? '**balasan telah dihapus**' : reply.content,
                   date: reply.date,
                   username: reply.username,
                   isDelete: reply.is_delete,
