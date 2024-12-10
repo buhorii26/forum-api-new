@@ -10,7 +10,7 @@ class ReplyCommentRepositoryPostgres extends ReplyCommentRepository {
     this._idGenerator = idGenerator;
   }
 
-  async addReplyComment(userId, commentId, newReplyComment) {
+  async addReplyComment(ownerId, commentId, newReplyComment) {
     const { content } = newReplyComment;
     const id = `reply-${this._idGenerator()}`;
     const date = new Date().toISOString();
@@ -21,7 +21,7 @@ class ReplyCommentRepositoryPostgres extends ReplyCommentRepository {
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id, content, owner
           `,
-      values: [id, content, commentId, userId, false, date],
+      values: [id, content, commentId, ownerId, false, date],
     };
 
     const result = await this._pool.query(query);
@@ -79,10 +79,10 @@ class ReplyCommentRepositoryPostgres extends ReplyCommentRepository {
     await this._pool.query(query);
   }
 
-  async verifyReplyOwner(replyId, userId) {
+  async verifyReplyOwner(replyId, ownerId) {
     const query = {
       text: 'SELECT * FROM reply_comment WHERE id = $1 AND owner = $2',
-      values: [replyId, userId],
+      values: [replyId, ownerId],
     };
 
     const result = await this._pool.query(query);

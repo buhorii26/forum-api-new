@@ -96,6 +96,7 @@ describe('CommentRepositoryPostgres', () => {
         username: 'buhori',
         content: 'Comment One',
         is_delete: false,
+        like_count: '0',
         date: expect.any(String),
       });
       expect(comments[1]).toStrictEqual({
@@ -103,6 +104,7 @@ describe('CommentRepositoryPostgres', () => {
         username: 'buhori',
         content: 'Comment Two',
         is_delete: false,
+        like_count: '0',
         date: expect.any(String),
       });
     });
@@ -127,6 +129,7 @@ describe('CommentRepositoryPostgres', () => {
         threadId: 'thread-123',
         owner: 'user-123',
         content: 'This is a test comment',
+        likeCount: 5,
         isDelete: false,
       };
 

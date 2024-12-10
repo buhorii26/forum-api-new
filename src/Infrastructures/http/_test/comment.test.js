@@ -76,7 +76,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
 
     it('should response 400 when request payload not contain needed property', async () => {
       const loginPayload = {
-        username: 'ryananggada',
+        username: 'dicoding',
         password: 'password123',
       };
       const threadPayload = {
@@ -93,7 +93,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
         payload: {
           username: loginPayload.username,
           password: loginPayload.password,
-          fullname: 'Ryan Anggada',
+          fullname: 'Dicoding',
         },
       });
 

@@ -35,10 +35,10 @@ class ReplyCommentHandler {
       DeleteReplyCommentUseCase.name,
     );
 
-    const { id: userId } = request.auth.credentials;
+    const { id: ownerId } = request.auth.credentials;
     const { threadId, commentId, replyId } = request.params;
 
-    await deleteReplyUseCase.execute(threadId, commentId, replyId, userId);
+    await deleteReplyUseCase.execute(threadId, commentId, replyId, ownerId);
 
     const response = h.response({
       status: 'success',

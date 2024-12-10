@@ -6,25 +6,30 @@ const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTrans
 const threads = require('../../Interfaces/http/api/threads');
 const users = require('../../Interfaces/http/api/users');
 const comments = require('../../Interfaces/http/api/comments');
-const reply = require('../../Interfaces/http/api/reply-comment');
+const replyComment = require('../../Interfaces/http/api/reply-comment');
+const likesComment = require('../../Interfaces/http/api/likes-comment');
 const authentications = require('../../Interfaces/http/api/authentications');
 const config = require('../../Commons/config');
 const logger = require('../../Logger');
 
 const createServer = async (container) => {
+  // Set default environment variables for tests
+  process.env.ACCESS_TOKEN_KEY = process.env.ACCESS_TOKEN_KEY || 'test_secret_key';
+  process.env.ACCESS_TOKEN_AGE = process.env.ACCESS_TOKEN_AGE || '3600';
+
   const server = Hapi.server({
     port: config.app.port,
     host: config.app.host,
   });
 
-  // registrasi plugin eksternal
+  // Registrasi plugin eksternal
   await server.register([
     {
       plugin: Jwt,
     },
   ]);
 
-  // mendefinisikan strategy autentikasi jwt
+  // Mendefinisikan strategy autentikasi jwt
   server.auth.strategy('forumapi_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
     verify: {
@@ -40,6 +45,11 @@ const createServer = async (container) => {
       },
     }),
   });
+
+  if (process.env.NODE_ENV === 'test') {
+    logger.info = () => {};
+    logger.error = () => {};
+  }
 
   await server.register([
     {
@@ -59,7 +69,11 @@ const createServer = async (container) => {
       options: { container },
     },
     {
-      plugin: reply,
+      plugin: replyComment,
+      options: { container },
+    },
+    {
+      plugin: likesComment,
       options: { container },
     },
   ]);
@@ -73,14 +87,11 @@ const createServer = async (container) => {
   });
 
   server.ext('onPreResponse', (request, h) => {
-    // mendapatkan konteks response dari request
     const { response } = request;
 
     if (response instanceof Error) {
-      // bila response tersebut error, tangani sesuai kebutuhan
       const translatedError = DomainErrorTranslator.translate(response);
 
-      // penanganan client error secara internal.
       if (translatedError instanceof ClientError) {
         const newResponse = h.response({
           status: 'fail',
@@ -90,14 +101,12 @@ const createServer = async (container) => {
         return newResponse;
       }
 
-      // mempertahankan penanganan client error oleh hapi secara native, seperti 404, etc.
       if (!translatedError.isServer) {
         return h.continue;
       }
 
       console.error(response);
 
-      // penanganan server error sesuai kebutuhan
       const newResponse = h.response({
         status: 'error',
         message: 'terjadi kegagalan pada server kami',
@@ -106,14 +115,16 @@ const createServer = async (container) => {
       return newResponse;
     }
 
-    // logging
     logger.info(
-      `userIP=${request.info.remoteAddress}, host=${os.hostname},  method=${
-        request.method
-      }, path=${request.path}, payload=${JSON.stringify(response.source)}`,
+      `userIP=${request.info.remoteAddress}, host=${os.hostname}, method=${request.method}, path=${request.path}, payload=${JSON.stringify(response.source)}`,
     );
-    // jika bukan error, lanjutkan dengan response sebelumnya (tanpa terintervensi)
     return h.continue;
+  });
+
+  server.events.on('stop', async () => {
+    if (container.database) {
+      await container.database.close();
+    }
   });
 
   return server;

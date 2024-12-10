@@ -1,5 +1,5 @@
 class ReplyCommentRepository {
-  async addReplyComment(userId, commentId, newReply) {
+  async addReplyComment(ownerId, commentId, newReply) {
     throw new Error('REPLY_COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
@@ -15,7 +15,7 @@ class ReplyCommentRepository {
     throw new Error('REPLY_COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async verifyReplyOwner(replyId, userId) {
+  async verifyReplyOwner(replyId, ownerId) {
     throw new Error('REPLY_COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 }
