@@ -1,0 +1,54 @@
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# https://www.nginx.com/resources/wiki/start/
+# https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/
+# https://wiki.debian.org/Nginx/DirectoryStructure
+
+limit_req_zone $binary_remote_addr zone=one:10m rate=90r/m;
+server {
+        root /var/www/html;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+
+        # Add index.php to the list if you are using PHP
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name weak-cycles-happen-brightly.a276.dcdg.xyz www.weak-cycles-happen-brightly.a276.dcdg.xyz;
+        location / {
+            proxy_pass http://13.212.101.49:5000;
+        }
+        location ~ ^/threads(/.*)?$ {
+            proxy_pass http://13.212.101.49:5000;
+            limit_req zone=one;
+        }
+
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/weak-cycles-happen-brightly.a276.dcdg.xyz/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/weak-cycles-happen-brightly.a276.dcdg.xyz/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+}
+
+server {
+    if ($host = www.weak-cycles-happen-brightly.a276.dcdg.xyz) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = weak-cycles-happen-brightly.a276.dcdg.xyz) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+        server_name weak-cycles-happen-brightly.a276.dcdg.xyz www.weak-cycles-happen-brightly.a276.dcdg.xyz;
+    return 404; # managed by Certbot
+}
